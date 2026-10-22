@@ -1,4 +1,4 @@
-project_id = "ds-review-hub"
+project_id = "bbvnroqfyuulgtuveysz"
 
 [functions.generate-copy]
 verify_jwt = false
