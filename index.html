@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="fo-verify" content="0831dc0c-3b58-4c18-a506-ac69d41ded8c" />
+
+    <title>DS Review Hub</title>
+    <meta name="description" content="DS Review Hub publishes practical brand reviews, buying guidance, and current shopping offers.">
+    <meta name="author" content="DS Review Hub" />
+
+    <meta property="og:title" content="DS Review Hub">
+    <meta property="og:description" content="Research brands, compare the tradeoffs, and shop with more confidence at DS Review Hub.">
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://www.dsreviewhub.com/favicon.ico">
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@dsreviewhub" />
+    <meta name="twitter:title" content="DS Review Hub">
+    <meta name="twitter:description" content="Research brands, compare the tradeoffs, and shop with more confidence at DS Review Hub.">
+    <meta name="twitter:image" content="https://www.dsreviewhub.com/favicon.ico">
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18053393174"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      window.gtag = window.gtag || gtag;
+      window.__DS_GOOGLE_ADS_TAG_IDS = window.__DS_GOOGLE_ADS_TAG_IDS || ["AW-18053393174"];
+      window.__DS_CONFIGURED_GOOGLE_ADS_TAG_IDS = window.__DS_CONFIGURED_GOOGLE_ADS_TAG_IDS || ["AW-18053393174"];
+      gtag("js", new Date());
+      gtag("config", "AW-18053393174");
+    </script>
+
+    <script>
+      (function () {
+        var params = new URLSearchParams(window.location.search);
+        var coupon = params.get("coupon");
+        if (!coupon) return;
+
+        window.__DS_COUPON_REVEAL = {
+          coupon: coupon,
+          path: window.location.pathname,
+          url: window.location.href
+        };
+
+        params.delete("coupon");
+        var nextSearch = params.toString();
+        var cleanUrl = window.location.pathname + (nextSearch ? "?" + nextSearch : "") + window.location.hash;
+        window.history.replaceState(window.history.state, "", cleanUrl);
+      })();
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'" />
+    <noscript>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" />
+    </noscript>
+
+    </head>
+
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+    </body>
+</html>
+

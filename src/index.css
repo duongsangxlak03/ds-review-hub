@@ -1,0 +1,161 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 240 10% 6%;
+    --foreground: 0 0% 95%;
+    --card: 240 8% 12%;
+    --card-foreground: 0 0% 95%;
+    --popover: 240 8% 12%;
+    --popover-foreground: 0 0% 95%;
+    --primary: 152 100% 51%;
+    --primary-foreground: 240 10% 6%;
+    --secondary: 240 8% 18%;
+    --secondary-foreground: 0 0% 90%;
+    --muted: 240 6% 16%;
+    --muted-foreground: 240 5% 55%;
+    --accent: 270 60% 55%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 240 6% 20%;
+    --input: 240 6% 20%;
+    --ring: 152 100% 51%;
+    --radius: 0.75rem;
+    --sidebar-background: 240 10% 8%;
+    --sidebar-foreground: 0 0% 90%;
+    --sidebar-primary: 152 100% 51%;
+    --sidebar-primary-foreground: 240 10% 6%;
+    --sidebar-accent: 240 8% 15%;
+    --sidebar-accent-foreground: 0 0% 90%;
+    --sidebar-border: 240 6% 20%;
+    --sidebar-ring: 152 100% 51%;
+    --hero-gradient: linear-gradient(135deg, hsl(270, 60%, 40%) 0%, hsl(250, 70%, 50%) 40%, hsl(280, 50%, 45%) 100%);
+    --card-hover: 240 8% 16%;
+    --success: 142 70% 45%;
+    --success-foreground: 0 0% 100%;
+    --neon-glow: 0 0 20px hsl(152, 100%, 51%, 0.3);
+  }
+  .dark {
+    --background: 240 10% 6%;
+    --foreground: 0 0% 95%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+    box-sizing: border-box;
+  }
+  html {
+    overflow-x: clip;
+    max-width: 100%;
+    scrollbar-gutter: stable;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'DM Sans', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif !important;
+    font-feature-settings: "ss02" 1, "liga" 0;
+    font-variant-ligatures: none;
+    text-rendering: optimizeLegibility;
+    overflow-x: clip;
+    max-width: 100%;
+  }
+  #root {
+    overflow-x: clip;
+    max-width: 100%;
+  }
+}
+
+@layer utilities {
+  @media (min-width: 1024px) {
+    .store-desktop-shell {
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      gap: 32px;
+      align-items: start;
+    }
+
+    .store-desktop-rail {
+      position: sticky;
+      top: 88px;
+      width: 280px;
+      z-index: 20;
+      align-self: start;
+    }
+
+    .store-desktop-content {
+      min-width: 0;
+      width: 100%;
+    }
+
+    .store-sticky-tabs {
+      position: sticky;
+      top: 64px;
+      z-index: 40;
+      min-height: 52px;
+      align-items: center;
+      background: hsl(var(--background) / 0.98);
+      border-bottom: 1px solid hsl(var(--border));
+    }
+
+    .store-sticky-tabs::before {
+      content: "";
+      position: absolute;
+      inset: 0 -24px;
+      z-index: -1;
+      background: inherit;
+      border-bottom: inherit;
+      box-shadow: 0 18px 30px hsl(var(--background) / 0.42);
+    }
+
+    .store-sticky-tab {
+      height: 52px;
+      border-bottom-width: 2px;
+      font-size: 17px;
+      font-weight: 600;
+      line-height: 1;
+      transition: color 150ms ease, border-color 150ms ease;
+    }
+
+  }
+
+  .hero-gradient {
+    background: var(--hero-gradient);
+  }
+  .store-directory-shell {
+    width: calc(100% - 56px);
+    max-width: 1540px;
+  }
+
+  @media (min-width: 768px) {
+    .store-directory-shell {
+      width: calc(100% - 96px);
+      max-width: 1280px;
+    }
+  }
+
+  @media (min-width: 1536px) {
+    .store-directory-shell {
+      width: calc(100% - 360px);
+      max-width: 1540px;
+    }
+  }
+
+  .text-gradient-primary {
+    background: linear-gradient(135deg, #03ff88, #00d46f);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .glow-primary {
+    box-shadow: var(--neon-glow);
+  }
+  .glass-card {
+    background: hsl(240, 8%, 12%, 0.8);
+    backdrop-filter: blur(12px);
+    border: 1px solid hsl(240, 6%, 20%, 0.5);
+  }
+}

@@ -1,0 +1,5 @@
+project_id = "ds-review-hub"
+
+[functions.generate-copy]
+verify_jwt = false
+

@@ -1,0 +1,23 @@
+export const REVIEW_IMPORT_SCHEMA_VERSION: string;
+export const REVIEW_IMPORT_COLUMNS: readonly string[];
+export const REVIEW_IMPORT_JSON_COLUMN_MAP: Readonly<Record<string, string>>;
+export function assertReviewImportHeaders(headers: string[]): void;
+export function reviewImportCellValue(review: object, column: string): unknown;
+export function csvEscape(value: unknown): string;
+export function buildReviewImportCsv(reviews: object[]): string;
+export function reviewQualityIssues(review: {
+  title?: string | null;
+  h1?: string | null;
+  summary?: string | null;
+  verdict?: string | null;
+  meta_title?: string | null;
+  meta_description?: string | null;
+  hero_image_url?: string | null;
+  hero_image_alt?: string | null;
+  best_for?: unknown;
+  pros?: unknown;
+  cons?: unknown;
+  content_sections?: unknown;
+  faqs?: unknown;
+  sources?: unknown;
+}): string[];

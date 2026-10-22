@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Static pages -->
+  <url><loc>https://www.dsreviewhub.com/</loc><changefreq>daily</changefreq><priority>1.0</priority></url>
+  <url><loc>https://www.dsreviewhub.com/stores</loc><changefreq>daily</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.dsreviewhub.com/deals</loc><changefreq>daily</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.dsreviewhub.com/insights</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.dsreviewhub.com/about</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://www.dsreviewhub.com/contact</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://www.dsreviewhub.com/privacy</loc><changefreq>monthly</changefreq><priority>0.4</priority></url>
+  <url><loc>https://www.dsreviewhub.com/terms</loc><changefreq>monthly</changefreq><priority>0.4</priority></url>
+  <url><loc>https://www.dsreviewhub.com/disclosure</loc><changefreq>monthly</changefreq><priority>0.4</priority></url>
+  <url><loc>https://www.dsreviewhub.com/why-different</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://www.dsreviewhub.com/learn</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+
+  <!-- Category pages -->
+  <url><loc>https://www.dsreviewhub.com/category/fashion-apparel</loc><changefreq>daily</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.dsreviewhub.com/category/electronics-tech</loc><changefreq>daily</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.dsreviewhub.com/category/beauty-personal-care</loc><changefreq>daily</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.dsreviewhub.com/category/health-wellness</loc><changefreq>daily</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.dsreviewhub.com/category/food-grocery</loc><changefreq>daily</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.dsreviewhub.com/category/home-garden</loc><changefreq>daily</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.dsreviewhub.com/category/sports-outdoors</loc><changefreq>daily</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.dsreviewhub.com/category/travel-hotels</loc><changefreq>daily</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.dsreviewhub.com/category/entertainment-media</loc><changefreq>daily</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.dsreviewhub.com/category/education-courses</loc><changefreq>daily</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.dsreviewhub.com/category/software-saas</loc><changefreq>daily</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.dsreviewhub.com/category/finance-insurance</loc><changefreq>daily</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.dsreviewhub.com/category/baby-kids</loc><changefreq>daily</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.dsreviewhub.com/category/pets</loc><changefreq>daily</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.dsreviewhub.com/category/automotive</loc><changefreq>daily</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.dsreviewhub.com/category/office-business</loc><changefreq>daily</changefreq><priority>0.8</priority></url>
+
+  <!-- Store pages -->
+  <url><loc>https://www.dsreviewhub.com/store/comfiroom</loc><changefreq>daily</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.dsreviewhub.com/store/modestystylebyadama</loc><changefreq>daily</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.dsreviewhub.com/store/oniexxs</loc><changefreq>daily</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.dsreviewhub.com/store/remoteformat</loc><changefreq>daily</changefreq><priority>0.7</priority></url>
+</urlset>
