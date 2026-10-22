@@ -9,7 +9,6 @@ begin
     'blog_posts',
     'store_reviews',
     'store_savings_guides',
-    'coupon_usage_stats',
     'google_tags'
   ]
   loop
