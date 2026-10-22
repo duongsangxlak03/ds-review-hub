@@ -42,6 +42,7 @@ export interface Coupon {
 export interface StoreReview {
   id: string;
   store_id: string;
+  review_vertical: "ai" | "ecommerce";
   title: string;
   h1: string | null;
   slug: string | null;

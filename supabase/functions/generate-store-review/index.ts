@@ -9,6 +9,7 @@ const corsHeaders = {
 
 interface GenerateStoreReviewRequest {
   store_id: string;
+  review_vertical?: "ai" | "ecommerce";
   reference_urls?: string[];
   image_urls?: string[];
   publish?: boolean;
@@ -408,6 +409,7 @@ Deno.serve(async (req) => {
     if (!body.store_id) {
       return jsonResponse({ error: "store_id is required" }, 400);
     }
+    const reviewVertical = body.review_vertical === "ai" ? "ai" : "ecommerce";
 
     const { data: store, error: storeError } = await supabaseClient
       .from("stores")
@@ -417,6 +419,21 @@ Deno.serve(async (req) => {
 
     if (storeError) throw storeError;
     if (!store) return jsonResponse({ error: "Store not found" }, 404);
+
+    const { data: existingReview, error: existingReviewError } = await supabaseClient
+      .from("store_reviews")
+      .select("review_vertical")
+      .eq("store_id", store.id)
+      .maybeSingle();
+    if (existingReviewError) throw existingReviewError;
+    if (existingReview && existingReview.review_vertical !== reviewVertical) {
+      return jsonResponse(
+        {
+          error: `This store already belongs to ${existingReview.review_vertical === "ai" ? "AI Reviews" : "Ecommerce Reviews"}. Use the matching admin section.`,
+        },
+        409,
+      );
+    }
 
     const { data: couponsData, error: couponsError } = await supabaseClient
       .from("coupons")
@@ -463,10 +480,16 @@ Deno.serve(async (req) => {
       "";
 
     const currentYear = new Date().getFullYear();
+    const verticalRequirements = reviewVertical === "ai"
+      ? `This is an AI product review. Prioritize concrete use cases, output quality, reliability, workflow fit, plan limits, integrations, data handling/privacy, and credible alternatives. Do not judge it like a physical retailer or invent hands-on tests.`
+      : `This is an ecommerce brand review. Prioritize catalog and product fit, value, checkout experience, delivery/fulfillment, returns, customer support, shopping trust, and credible alternatives. Do not judge it like a software tool.`;
 
     const prompt = `You are the senior affiliate SEO editor for DS Review Hub.
 
 Create a complete editorial review for its own dedicated /reviews/[slug] page. The review must help a reader decide whether the brand is a good fit. Current offers may appear as a clearly secondary next step, never as the substance of the review.
+
+Review vertical: ${reviewVertical}
+${verticalRequirements}
 
 Store:
 ${JSON.stringify(store, null, 2)}
@@ -581,6 +604,7 @@ Return ONLY valid JSON with this exact shape:
 
     const payload = {
       store_id: store.id,
+      review_vertical: reviewVertical,
       title: compact(generated.title || `${store.name} Review ${currentYear}: What to Know Before Buying`, 180),
       h1: compact(generated.h1 || "", 180) || null,
       slug: compact(generated.slug || `${store.slug || store.name}-review-${currentYear}`, 120)

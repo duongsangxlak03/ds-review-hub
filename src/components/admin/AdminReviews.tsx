@@ -17,6 +17,33 @@ import { notifyPublicContentChanged } from "@/lib/publicContentSync";
 import { queueSiteDeploy } from "@/lib/triggerSiteDeploy";
 
 type ReviewWithStore = StoreReview & { stores?: Pick<Store, "name" | "slug" | "logo_url"> | null };
+type ReviewVertical = "ai" | "ecommerce";
+
+const verticalConfig = {
+  ai: {
+    label: "AI Reviews",
+    singular: "AI product review",
+    category: "AI Tools",
+    brandPlaceholder: "e.g. Jasper",
+    criteria: ["Output quality + reliability", "Use cases, limits + workflow fit", "Pricing, integrations + privacy"],
+    description: "Review AI tools as software products: what they do well, where they fail, who should use them, and the operational tradeoffs.",
+  },
+  ecommerce: {
+    label: "Ecommerce Reviews",
+    singular: "ecommerce brand review",
+    category: "Ecommerce",
+    brandPlaceholder: "e.g. Nike",
+    criteria: ["Product quality + catalog fit", "Price, delivery + fulfillment", "Returns, support + shopping trust"],
+    description: "Review shopping brands as retailers: product value, buying experience, delivery, returns, support, and who the store best serves.",
+  },
+} satisfies Record<ReviewVertical, {
+  label: string;
+  singular: string;
+  category: string;
+  brandPlaceholder: string;
+  criteria: string[];
+  description: string;
+}>;
 
 type AffiliateIntakeResult = {
   store: Store;
@@ -122,8 +149,13 @@ const toDraft = (review: ReviewWithStore): ReviewDraft => ({
   sources: formatJson(review.sources),
 });
 
-const AdminReviews = () => {
+interface AdminReviewsProps {
+  vertical: ReviewVertical;
+}
+
+const AdminReviews = ({ vertical }: AdminReviewsProps) => {
   const queryClient = useQueryClient();
+  const config = verticalConfig[vertical];
   const reviewImportInputRef = useRef<HTMLInputElement>(null);
   const [selectedStore, setSelectedStore] = useState("");
   const [referenceUrls, setReferenceUrls] = useState("");
@@ -145,7 +177,7 @@ const AdminReviews = () => {
     },
   });
 
-  const { data: reviews = [], isLoading } = useQuery({
+  const { data: allReviews = [], isLoading } = useQuery({
     queryKey: ["admin-store-reviews"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -157,8 +189,16 @@ const AdminReviews = () => {
     },
   });
 
-  const reviewByStoreId = useMemo(() => new Map(reviews.map((review) => [review.store_id, review])), [reviews]);
-  const storesWithoutReview = stores.filter((store) => !reviewByStoreId.has(store.id));
+  const reviews = useMemo(
+    () => allReviews.filter((review) => review.review_vertical === vertical),
+    [allReviews, vertical],
+  );
+  const reviewByStoreId = useMemo(() => new Map(allReviews.map((review) => [review.store_id, review])), [allReviews]);
+  const eligibleStores = stores.filter((store) => {
+    const existingReview = reviewByStoreId.get(store.id);
+    return !existingReview || existingReview.review_vertical === vertical;
+  });
+  const storesWithoutReview = eligibleStores.filter((store) => !reviewByStoreId.has(store.id));
 
   const getAccessToken = async () => {
     const { data: sessionData } = await supabase.auth.getSession();
@@ -194,6 +234,7 @@ const AdminReviews = () => {
       },
       body: JSON.stringify({
         store_id: storeId,
+        review_vertical: vertical,
         reference_urls: Array.from(new Set(references.filter(Boolean))),
         image_urls: Array.from(new Set(images.filter(Boolean))),
         publish: false,
@@ -234,7 +275,7 @@ const AdminReviews = () => {
         body: JSON.stringify({
           affiliate_url: affiliateUrl.trim(),
           brand_name: affiliateBrand.trim() || undefined,
-          category: affiliateCategory.trim() || undefined,
+          category: affiliateCategory.trim() || config.category,
         }),
       });
       const intake = await parseFunctionResponse<AffiliateIntakeResult>(response);
@@ -290,11 +331,24 @@ const AdminReviews = () => {
           : await supabase.from("stores").insert(storePayload).select("id").single();
         if (storeResult.error) throw new Error(`Row ${row.rowNumber}: ${storeResult.error.message}`);
 
+        const { data: existingReview, error: reviewLookupError } = await supabase
+          .from("store_reviews")
+          .select("review_vertical")
+          .eq("store_id", storeResult.data.id)
+          .maybeSingle();
+        if (reviewLookupError) throw new Error(`Row ${row.rowNumber}: ${reviewLookupError.message}`);
+        if (existingReview && existingReview.review_vertical !== vertical) {
+          throw new Error(
+            `Row ${row.rowNumber}: ${row.storeName} already belongs to ${existingReview.review_vertical === "ai" ? "AI Reviews" : "Ecommerce Reviews"}. Import it from the matching admin section.`,
+          );
+        }
+
         const generatedAt = row.checkedAt && !Number.isNaN(new Date(row.checkedAt).getTime())
           ? new Date(row.checkedAt).toISOString()
           : new Date().toISOString();
         const reviewPayload = {
           store_id: storeResult.data.id,
+          review_vertical: vertical,
           title: row.title,
           h1: row.h1 || null,
           slug: row.slug || `${row.storeSlug}-review-${new Date().getFullYear()}`,
@@ -364,6 +418,7 @@ const AdminReviews = () => {
     mutationFn: async () => {
       if (!editing || !draft) throw new Error("Khong co review dang sua.");
       const payload = {
+        review_vertical: vertical,
         title: draft.title.trim(),
         h1: draft.h1.trim() || null,
         meta_title: draft.meta_title.trim() || null,
@@ -461,14 +516,31 @@ const AdminReviews = () => {
 
   return (
     <div className="space-y-6">
+      <div className="rounded-xl border border-border bg-card p-5">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+          <div className="max-w-2xl">
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-primary">Separate editorial workflow</p>
+            <h2 className="mt-2 text-2xl font-black tracking-tight text-foreground">{config.label}</h2>
+            <p className="mt-2 text-sm leading-6 text-muted-foreground">{config.description}</p>
+          </div>
+          <div className="grid gap-2 sm:grid-cols-3 lg:max-w-2xl">
+            {config.criteria.map((criterion) => (
+              <div key={criterion} className="rounded-lg border border-border bg-muted/35 px-3 py-2 text-xs font-semibold leading-5 text-foreground">
+                {criterion}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
       <div className="overflow-hidden rounded-xl border border-primary/30 bg-[linear-gradient(135deg,hsl(var(--primary)/0.12),hsl(var(--card))_58%)]">
         <div className="grid gap-5 p-5 lg:grid-cols-[minmax(0,1fr)_minmax(340px,0.9fr)] lg:p-6">
           <div>
             <div className="inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.14em] text-primary">
-              <Link2 className="h-3.5 w-3.5" /> Affiliate review intake
+              <Link2 className="h-3.5 w-3.5" /> {config.singular} intake
             </div>
             <h2 className="mt-4 max-w-2xl text-2xl font-black tracking-tight text-foreground">
-              Paste one affiliate link. Build an evidence-backed draft.
+              Add one affiliate link. Build a {config.singular} draft.
             </h2>
             <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">
               The original affiliate URL stays attached to the store CTA. We resolve the merchant page for research, collect supporting evidence, and create a draft only—never an automatic publish.
@@ -498,7 +570,7 @@ const AdminReviews = () => {
                   id="affiliate-brand"
                   value={affiliateBrand}
                   onChange={(event) => setAffiliateBrand(event.target.value)}
-                  placeholder="e.g. Shopify"
+                  placeholder={config.brandPlaceholder}
                 />
               </div>
               <div className="space-y-1.5">
@@ -507,7 +579,7 @@ const AdminReviews = () => {
                   id="affiliate-category"
                   value={affiliateCategory}
                   onChange={(event) => setAffiliateCategory(event.target.value)}
-                  placeholder="e.g. Ecommerce"
+                  placeholder={`e.g. ${config.category}`}
                 />
               </div>
             </div>
@@ -526,9 +598,9 @@ const AdminReviews = () => {
       <div className="rounded-xl border border-border bg-card p-4 sm:p-5">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <h2 className="text-lg font-bold text-foreground">Import ChatGPT/Codex review batch</h2>
+            <h2 className="text-lg font-bold text-foreground">Import {config.label} batch</h2>
             <p className="mt-1 max-w-2xl text-sm leading-6 text-muted-foreground">
-              Upload the CSV companion generated by the local ChatGPT Plan tool. Every review is imported as a draft, while the exact affiliate URL becomes the store CTA.
+              Upload the CSV generated by your separate review tool. Every row is tagged as {vertical === "ai" ? "AI" : "Ecommerce"}, imported as a draft, and keeps the exact affiliate URL as the store CTA.
             </p>
             <p className="mt-1 text-xs font-semibold text-muted-foreground">Accepted contract: {REVIEW_IMPORT_SCHEMA_VERSION}</p>
           </div>
@@ -614,9 +686,9 @@ const AdminReviews = () => {
       <div className="space-y-3 rounded-xl border border-border bg-card p-4">
         <div className="flex items-center justify-between gap-3">
           <div>
-            <h2 className="text-lg font-bold">Store Reviews</h2>
+            <h2 className="text-lg font-bold">{config.label}</h2>
             <p className="text-sm text-muted-foreground">
-              Generate AI drafts, edit them, then publish each review to its own editorial page.
+              Manage only {vertical === "ai" ? "AI product" : "ecommerce brand"} drafts here, then publish each review to its own editorial page.
             </p>
           </div>
         </div>
@@ -627,7 +699,7 @@ const AdminReviews = () => {
               <SelectValue placeholder="Chon store de generate" />
             </SelectTrigger>
             <SelectContent>
-              {stores.map((store) => (
+              {eligibleStores.map((store) => (
                 <SelectItem key={store.id} value={store.id}>
                   {store.name}{reviewByStoreId.has(store.id) ? " (regenerate)" : ""}
                 </SelectItem>
@@ -662,7 +734,7 @@ const AdminReviews = () => {
       {isLoading ? (
         <p className="text-sm text-muted-foreground">Dang tai reviews...</p>
       ) : reviews.length === 0 ? (
-        <p className="text-sm text-muted-foreground">Chua co store review nao.</p>
+        <p className="text-sm text-muted-foreground">Chua co {config.singular} nao.</p>
       ) : (
         <div className="grid gap-3">
           {reviews.map((review) => {
@@ -730,7 +802,7 @@ const AdminReviews = () => {
       <Dialog open={!!editing && !!draft} onOpenChange={(open) => { if (!open) { setEditing(null); setDraft(null); } }}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Edit Store Review</DialogTitle>
+            <DialogTitle>Edit {config.singular}</DialogTitle>
           </DialogHeader>
           {draft && (
             <form

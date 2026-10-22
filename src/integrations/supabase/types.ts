@@ -271,6 +271,7 @@ export type Database = {
           pros: string[]
           published_at: string | null
           research_queries: Json
+          review_vertical: string
           slug: string | null
           sources: Json
           status: string
@@ -302,6 +303,7 @@ export type Database = {
           pros?: string[]
           published_at?: string | null
           research_queries?: Json
+          review_vertical?: string
           slug?: string | null
           sources?: Json
           status?: string
@@ -333,6 +335,7 @@ export type Database = {
           pros?: string[]
           published_at?: string | null
           research_queries?: Json
+          review_vertical?: string
           slug?: string | null
           sources?: Json
           status?: string

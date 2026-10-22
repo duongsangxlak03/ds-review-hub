@@ -11,7 +11,7 @@ import AdminBlog from "@/components/admin/AdminBlog";
 import AdminGoogleTags from "@/components/admin/AdminGoogleTags";
 import AdminReviews from "@/components/admin/AdminReviews";
 import DeploySiteButton from "@/components/admin/DeploySiteButton";
-import { Store, ShoppingBag, Tag, LogOut, Menu, X, Home, Upload, FileText, Code, Sparkles } from "lucide-react";
+import { Store, ShoppingBag, Tag, LogOut, Menu, X, Home, Upload, FileText, Code, Bot } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -22,7 +22,8 @@ const navItems = [
   { id: "deals", label: "Deals", icon: ShoppingBag },
   { id: "import", label: "Import CSV", icon: Upload },
   { id: "blog", label: "Insights", icon: FileText },
-  { id: "reviews", label: "Store Reviews", icon: Sparkles },
+  { id: "ai-reviews", label: "AI Reviews", icon: Bot },
+  { id: "ecommerce-reviews", label: "Ecommerce Reviews", icon: ShoppingBag },
   { id: "google-tags", label: "Google Tags", icon: Code },
 ];
 
@@ -31,6 +32,7 @@ const Admin = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("dashboard");
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const activeNavItem = navItems.find((item) => item.id === activeTab);
 
   if (loading) {
     return (
@@ -122,7 +124,7 @@ const Admin = () => {
           >
             {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
-          <h1 className="text-lg font-bold capitalize">{activeTab}</h1>
+          <h1 className="text-lg font-bold">{activeNavItem?.label || activeTab}</h1>
           <div className="ml-auto flex items-center gap-3">
             <DeploySiteButton source={`admin-${activeTab}`} size="sm" className="hidden sm:inline-flex" />
             <a href="/" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
@@ -139,7 +141,8 @@ const Admin = () => {
           {activeTab === "deals" && <AdminDeals />}
           {activeTab === "import" && <AdminImport />}
           {activeTab === "blog" && <AdminBlog />}
-          {activeTab === "reviews" && <AdminReviews />}
+          {activeTab === "ai-reviews" && <AdminReviews vertical="ai" />}
+          {activeTab === "ecommerce-reviews" && <AdminReviews vertical="ecommerce" />}
           {activeTab === "google-tags" && <AdminGoogleTags />}
         </main>
       </div>
