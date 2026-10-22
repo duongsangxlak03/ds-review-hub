@@ -63,7 +63,7 @@ const Admin = () => {
           <Home className="h-5 w-5 text-primary shrink-0" />
           {sidebarOpen && (
             <span className="text-lg font-extrabold tracking-tight text-primary">
-              SD Admin
+              DS Admin
             </span>
           )}
         </div>

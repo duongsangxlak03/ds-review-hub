@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { Mail, Lock, CheckCircle2 } from "lucide-react";
 
 const Auth = () => {
+  const allowPublicSignup = import.meta.env.VITE_ALLOW_PUBLIC_SIGNUP === "true";
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -69,15 +70,17 @@ const Auth = () => {
           <a href="/" className="text-2xl font-extrabold tracking-tight text-primary inline-block">
             DS Review Hub
           </a>
-          <p className="text-muted-foreground text-sm">Đăng nhập hoặc tạo tài khoản mới</p>
+          <p className="text-muted-foreground text-sm">
+            {allowPublicSignup ? "Đăng nhập hoặc tạo tài khoản mới" : "Đăng nhập quản trị"}
+          </p>
         </div>
 
         <Card className="border-border/50">
           <Tabs defaultValue="login" onValueChange={() => { setError(null); setSuccess(null); }}>
             <CardHeader className="pb-4">
-              <TabsList className="grid w-full grid-cols-2">
+              <TabsList className={allowPublicSignup ? "grid w-full grid-cols-2" : "grid w-full grid-cols-1"}>
                 <TabsTrigger value="login">Đăng nhập</TabsTrigger>
-                <TabsTrigger value="signup">Đăng ký</TabsTrigger>
+                {allowPublicSignup && <TabsTrigger value="signup">Đăng ký</TabsTrigger>}
               </TabsList>
             </CardHeader>
 
@@ -116,7 +119,7 @@ const Auth = () => {
                 </form>
               </TabsContent>
 
-              <TabsContent value="signup" className="mt-0 space-y-4">
+              {allowPublicSignup && <TabsContent value="signup" className="mt-0 space-y-4">
                 <form onSubmit={handleSignup} className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="signup-email">Email</Label>
@@ -136,14 +139,16 @@ const Auth = () => {
                     {loading ? "Đang xử lý..." : "Đăng ký"}
                   </Button>
                 </form>
-              </TabsContent>
+              </TabsContent>}
             </CardContent>
           </Tabs>
         </Card>
 
-        <p className="text-center text-xs text-muted-foreground">
-          Bằng việc đăng ký, bạn đồng ý với Điều khoản sử dụng của DS Review Hub.
-        </p>
+        {allowPublicSignup && (
+          <p className="text-center text-xs text-muted-foreground">
+            Bằng việc đăng ký, bạn đồng ý với Điều khoản sử dụng của DS Review Hub.
+          </p>
+        )}
       </div>
     </div>
   );
